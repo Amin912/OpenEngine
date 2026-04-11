@@ -1,0 +1,16 @@
+build/
+out/
+*.o
+*.obj
+*.exe
+*.dll
+*.a
+*.lib
+*.pdb
+.vs/
+.vscode/
+.idea/
+*.cbp
+*.depend
+*.layout
+screenshot*.bmp
