@@ -1,14 +1,16 @@
 #version 330 core
-        	out vec4 FragColor;
-        	//in vec3 MyColor;
-	in vec2 MyTexture;
-	uniform sampler2D texData;
-	uniform sampler2D texData1;
-	uniform float amount;
-	//in vec3 position;
-        	void main()
-        	{
-           		FragColor = mix(texture(texData,MyTexture),texture(texData1,MyTexture),amount);
-		//FragColor = texture(texData,MyTexture)*vec4(MyColor,1.0);
-		//FragColor = vec4(MyColor,1.0);
-        	}
+
+in vec2 uv;
+out vec4 fragColor;
+
+uniform sampler2D textureA;
+uniform sampler2D textureB;
+uniform float blend;  // 0 shows textureA, 1 shows textureB
+
+void main()
+{
+    // Textures are stored as sRGB, so sampling returns linear colour. Convert
+    // back to sRGB for the screen.
+    vec3 color = mix(texture(textureA, uv).rgb, texture(textureB, uv).rgb, blend);
+    fragColor = vec4(pow(color, vec3(1.0 / 2.2)), 1.0);
+}
