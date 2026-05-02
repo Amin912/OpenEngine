@@ -36,6 +36,7 @@ target_link_libraries(glad PUBLIC ${CMAKE_DL_LIBS})
 add_library(openengine STATIC
     engine/Camera.cpp
     engine/Mesh.cpp
+    engine/Screenshot.cpp
     engine/Shader.cpp
     engine/Texture.cpp
     engine/Window.cpp)
