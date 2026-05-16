@@ -33,11 +33,12 @@ namespace {
 
 constexpr int Width = 1280;
 constexpr int Height = 720;
+const glm::vec3 Sky(0.62f, 0.74f, 0.86f);
 
 // Everything in the world, and how to draw it at a given time.
 struct Scene {
     explicit Scene(const std::filesystem::path& shaders)
-        : shader((shaders / "basic.vert").string(), (shaders / "basic.frag").string()),
+        : shader((shaders / "lit.vert").string(), (shaders / "lit.frag").string()),
           cube(oe::Mesh::cube()),
           floor(oe::Mesh::plane(60.0f, 30.0f)),
           wood(oe::Texture::panels(256, {0.62f, 0.42f, 0.24f}, {0.33f, 0.21f, 0.11f})),
@@ -53,7 +54,7 @@ struct Scene {
 
     void draw(const oe::Camera& camera, float aspect, float time) const
     {
-        glClearColor(0.62f, 0.74f, 0.86f, 1.0f);
+        glClearColor(Sky.r, Sky.g, Sky.b, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         shader.use();
@@ -61,16 +62,22 @@ struct Scene {
         shader.setMat4("projection", camera.projection(aspect));
         shader.setInt("textureA", 0);
         shader.setInt("textureB", 1);
+        shader.setVec3("cameraPosition", camera.position);
+        shader.setVec3("lightDirection", glm::normalize(glm::vec3(-0.4f, -1.0f, -0.3f)));
+        shader.setVec3("skyColor", Sky);
+        shader.setVec3("tint", glm::vec3(1.0f));
 
         tiles.bind(0);
         tiles.bind(1);
         shader.setFloat("blend", 0.0f);
+        shader.setFloat("shininess", 8.0f);
         shader.setMat4("model", glm::mat4(1.0f));
         floor.draw();
 
         wood.bind(0);
         steel.bind(1);
         shader.setFloat("blend", blend);
+        shader.setFloat("shininess", 24.0f);
         for (std::size_t i = 0; i < crates.size(); ++i) {
             glm::mat4 model = glm::translate(glm::mat4(1.0f), crates[i]);
             model = glm::rotate(model, time * 0.6f + static_cast<float>(i), glm::normalize(glm::vec3(1.0f, 0.3f, 0.5f)));
