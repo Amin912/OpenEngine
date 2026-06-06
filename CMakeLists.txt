@@ -36,6 +36,7 @@ target_link_libraries(glad PUBLIC ${CMAKE_DL_LIBS})
 add_library(openengine STATIC
     engine/Camera.cpp
     engine/Mesh.cpp
+    engine/Physics.cpp
     engine/Screenshot.cpp
     engine/Shader.cpp
     engine/Texture.cpp
@@ -46,6 +47,19 @@ if(MSVC)
     target_compile_options(openengine PRIVATE /W4 /permissive-)
 else()
     target_compile_options(openengine PRIVATE -Wall -Wextra -Wpedantic)
+endif()
+
+option(OPENENGINE_BUILD_TESTS "Build the unit tests" ON)
+if(OPENENGINE_BUILD_TESTS)
+    enable_testing()
+    FetchContent_Declare(doctest
+        GIT_REPOSITORY https://github.com/doctest/doctest.git
+        GIT_TAG v2.4.12
+        GIT_SHALLOW TRUE)
+    FetchContent_MakeAvailable(doctest)
+    add_executable(physics_tests tests/physics_tests.cpp)
+    target_link_libraries(physics_tests PRIVATE openengine doctest::doctest)
+    add_test(NAME physics_tests COMMAND physics_tests)
 endif()
 
 add_executable(demo demo/main.cpp)
