@@ -1,2 +1,5 @@
 * text=auto eol=lf
 *.png binary
+
+# Generated code: keep it out of GitHub's language statistics.
+third_party/** linguist-vendored
